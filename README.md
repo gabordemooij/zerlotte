@@ -8,29 +8,55 @@ turning HTML templates into type-safe, composable Java objects that mirror the H
 structure and make building dynamic pages fluent, safe, and IDE-friendly.
 
 
-Type safety
------------
+Compile time errors instead of Runtime errors
+---------------------------------------------
 
-Unlike string-based templates or Thymeleaf/Handlebars, slot names are compile-time methods.
-Mistyping a slot or paste ID will cause a compile error.
+Unlike string-based templates or Thymeleaf/Handlebars, slot names and
+composable template parts are compile-time methods.
+Mistyping a slot or paste ID will cause a compile error (not a runtime one).
+Also, if the designer removes a slot and you still try to fill it,
+you will also get a compile-time error. You can also never insert the
+wrong piece of HTML, the building blocks are clearly defined by types and
+only composable according to the rules in the template file.
 
-Fluent and readable code
-------------------------
-
-You can chain setters and paste snippets naturally.
-Makes template building feel like native Java programming, instead of string manipulation.
-
-Separation of content and code:
--------------------------------
+Clean Separation of content and code
+------------------------------------
 
 HTML designers can work on templates with minimal Java knowledge.
+They mark regions that can be used in other regions as well as slots that
+can be filled with plain text:
+
+```
+<!-- cut:book -->
+<div><!-- slot:title --></div>
+<!-- /cut:book -->
+```
+
 Java developers get a typed API to populate content.
 
-Recursive snippets:
--------------------
 
-Snippets can contain other snippets.
-The generated API mirrors the hierarchy of your HTML, making nested templates easy to use.
+Typesafety
+----------
+
+Designers can enforce certain restrictions in their templates.
+For instance, a list of books that must only contain books and magazine but no 
+leaflets can be written as:
+
+```
+<!-- paste:books(book,magazine) -->
+```
+
+For Java developers this means that the BookShelf has
+a method pasteBook( Book ) and a method pasteBook( Magazine ) but
+no way of adding a leaflet to the shelf.
+The HTML becomes the source of truth.
+
+Autocomplete driven templating
+------------------------------
+
+As a bonus, the IDE will help Java developers to explore and
+understand the template and how it's meant to be used.
+
 
 Example
 =======
@@ -130,24 +156,42 @@ import com.zerlotemplate.snippets.*;
 ...
 
 public ResponseEntity<Object> bookshop() {
-		Template t = Template.from(new ClassPathResource("templates/bookshop.html"));
-		Shop shop = new Shop(t);
-		Shelf shelf = root.getShelf();
-		Book book = shelf.getBook();
-		Book book2 = shelf.getBook();
-		book.setTitle("my book");
-		book2.setTitle("second book");
-		shelf.pasteBooks(book);
-		shelf.pasteBooks(book2);
-		root.pasteShelves(shelf);
-		String html = root.toString();
-		return ResponseEntity.ok()
-				.header("Content-Type", "text/html")
-				.body(html);
-	}
+	
+	Template t = Template.from(new ClassPathResource("templates/bookshop.html"));
+	
+	// Create a new bookshop GUI
+	Shop shop = new Shop(t);
+	
+	// Add a shelf for the books
+	Shelf shelf = root.getShelf();
+	
+	// Get book templates
+	Book book = shelf.getBook();
+	Book book2 = shelf.getBook();
+	
+	// Set titles (fills slot), you cannot
+	// set a slot that does not exist
+	book.setTitle("my book");
+	book2.setTitle("second book");
+	
+	// Put books on the shelf
+	// You cannot put items on the shelf that
+	// the designer does not allow
+	shelf.pasteBooks(book);
+	shelf.pasteBooks(book2);
+	
+	root.pasteShelves(shelf);
+	String html = root.toString();
+	return ResponseEntity.ok()
+	.header("Content-Type", "text/html")
+	.body(html);
+}
 ```
 
 Note that this is a version 0.1/draft of the project.
+The architecture is not mature yet, it's just an initial draft written
+in two evenings.
+
 I just had to create a repository and push the code to get it out of my head.
 This is an idea that I have had for years and it just wanted out ;-)
 
