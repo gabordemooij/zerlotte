@@ -58,7 +58,10 @@ public class Template {
 
         m = Template.PATTERN_SLOT.matcher(result);
         while(m.find()) {
-            this.slots.add(m.group(1));
+            String slotID = m.group(1);
+            if (!this.slots.contains(slotID)) {
+                this.slots.add(m.group(1));
+            }
         }
 
         this.document = result;
@@ -119,13 +122,13 @@ public class Template {
     }
 
     public String getClassName() {
-        String suffix = "ZerlotSnippet";
+        String suffix = "";
         String className = capitalize(this.ID) + suffix;
         return className;
     }
 
     public String generateClass() {
-        String suffix = "ZerlotSnippet";
+        String suffix = "";
         String className = capitalize(this.ID) + suffix;
         String classStr = """
             package com.zerlotemplate.snippets;
