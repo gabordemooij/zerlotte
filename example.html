@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!-- slot:title --></title>
+</head>
+<body>
+    <h1>Bookshop</h1>
+    <!-- cut:shelf -->
+    <table>
+        <!-- cut:book -->
+        <tr>
+            <td>
+                <!-- slot:title -->
+            </td>
+        </tr>
+        <!-- /cut:book -->
+        <!-- cut:magazine -->
+        <tr>
+            <td>
+                <!-- slot:title -->
+            </td>
+        </tr>
+        <!-- /cut:magazine -->
+        <!-- paste:books(book,magazine) -->
+    </table>
+    <!-- /cut:shelf -->
+    <!-- paste:shelves(shelf) -->
+</body>
+</html>
