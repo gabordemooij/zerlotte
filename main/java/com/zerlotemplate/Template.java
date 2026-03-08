@@ -91,11 +91,14 @@ public class Template {
         if (this.slots.contains(slotID)) {
             String mark = "<!-- slot:%s -->".formatted(slotID) ;
             int start = this.document.indexOf(mark);
-            int end = start + mark.length();
-            this.document.replace(
-                    start,
-                    end,
-                    HtmlUtils.htmlEscape(value));
+            while(start != -1) {
+                int end = start + mark.length();
+                this.document.replace(
+                        start,
+                        end,
+                        HtmlUtils.htmlEscape(value));
+                start = this.document.indexOf(mark);
+            }
         }
         return this;
     }
