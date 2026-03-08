@@ -6,7 +6,7 @@ This project serves two purposes.
 
 First of all I wanted to know if I still feel comfortable with Java, the Java ecosystem
 (maven, intellij, spring etc..). I must say, I was pleasantly surprised by the state of affairs.
-Diving into modern java felt like a warm bath. There was far less friction than I remember from the past.
+Diving into modern java felt like a pleasant experience. There was far less friction than I remember from the past.
 Although I have been working with Java, JNI and Android in the past, my work was mainly CLI focused,
 so I needed to refresh my knowledge about Spring, Maven and other ecosystem elements of modern
 web centered Java again.
