@@ -18,7 +18,7 @@ class generation capabilities yielded a fully new perspective on the matter.
 This template engine was written in just two evenings, so it's far from perfect.
 The first evening I implemented the dynamic version (dynamic mode), this one is the equivalent
 of StampTE and the XOScript SE version. The next evening I created the draft version of the
-class generation and hooked it up to Maven. I was really amazed by the capabilities of Maven,
+class generation and hooked it up to Maven. I was really amazed by the capabilities of modern Maven,
 truly nice to work with! So I always wanted to see how my little template engine system idea
 would work out in Java and I have to say I am very pleased with the results of this initial version.
 
