@@ -14,15 +14,23 @@ public class TemplateGenerator {
 
     /**
      * Main method to generate the template classes.
+     * Should be integrated with Maven.
+     * Currently, uses exec-plugin but mvn generate-template-objects
+     * or so would be nicer!
+     *
+     * Arguments
+     * Argument 1: Path to template dir
+     * Argument 2: Classpath prefix (sorry, I was lazy)
+     * Argument 2: Path to output dir for classes
      *
      * @param args
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
         Path templateDir = Path.of(args[0]);
+        String classPathPrefix = args[1];
         Path outputDir = Path.of(args[2]);
         Files.createDirectories(outputDir);
-        String classPathPrefix = args[1];
         Files.walk(templateDir)
                 .filter(p -> p.toString().endsWith(".html"))
                 .forEach(p -> {
