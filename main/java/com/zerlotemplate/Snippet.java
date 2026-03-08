@@ -20,6 +20,9 @@ public interface Snippet {
      * unbox() to unwrap the template region hiding within
      * the instance.
      *
+     * @todo use a "private" interface for this method, since
+     * this method should not be visible to users.
+     *
      * @return Templateable
      */
     public Templateable unbox();

@@ -11,6 +11,13 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Default implementation of the Template class.
+ * This class is used in dynamic mode and to generate static mode
+ * classes. If you use the static mode, you only use this class
+ * to load the template file and then pass it to one of the
+ * generated wrappers to achieve typesafety and autodiscovery.
+ */
 public class Template implements Templateable {
 
     protected String ID;
@@ -34,6 +41,12 @@ public class Template implements Templateable {
             Pattern.DOTALL | Pattern.MULTILINE
     );
 
+    /**
+     * Constructor, creates a new instance of the Zerlotemplate.
+     *
+     * @param ID name of the template region
+     * @param document content string for this template instance
+     */
     public Template(String ID, String document) {
         this.ID = ID;
         Matcher m = Template.PATTERN_CUT.matcher(document);
@@ -46,7 +59,7 @@ public class Template implements Templateable {
         }
         m.appendTail(result);
 
-
+        //@todo validatie paste marker (might crash)
         m = Template.PATTERN_PASTE.matcher(result);
         while(m.find()) {
             String[] parts = m.group(1).split("\\(", 2);
@@ -67,7 +80,12 @@ public class Template implements Templateable {
         this.document = result;
     }
 
-
+    /**
+     * Creates a dynamic template instance from a path
+     *
+     * @param path to the HTML file to process
+     * @return Templateable
+     */
     public static Templateable from(ClassPathResource path) {
         try {
             byte[] bytes = path.getInputStream().readAllBytes();
