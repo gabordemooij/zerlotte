@@ -6,8 +6,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Template Generator to use in Maven/Gradle setup.
+ * Only tested with Maven currently.
+ */
 public class TemplateGenerator {
 
+    /**
+     * Main method to generate the template classes.
+     *
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         Path templateDir = Path.of(args[0]);
         Path outputDir = Path.of(args[2]);
