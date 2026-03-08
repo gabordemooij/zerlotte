@@ -1,3 +1,29 @@
+
+Preamble
+--------
+
+This project serves two purposes.
+
+First of all I wanted to know if I still feel comfortable with Java, the Java ecosystem
+(maven, intellij, spring etc..). I must say, I was pleasantly surprised by the state of affairs.
+Diving into modern java felt like a warm bath. There was far less friction than I remember from the past.
+Although I have been working with Java, JNI and Android in the past, my work was mainly CLI focused,
+so I needed to refresh my knowledge about Spring, Maven and other ecosystem elements of modern
+web centered Java again.
+
+Another reason for this project was that I had a bee in my bonnet. I experimented with
+cut-paste template systems before (see my PHP/Python/XO implementation of StampTE) but leveraging
+the power of Java's compile time type checking system together with Maven's on-the-fly
+class generation capabilities yielded a fully new perspective on the matter.
+This template engine was written in just two evenings, so it's far from perfect.
+The first evening I implemented the dynamic version (dynamic mode), this one is the equivalent
+of StampTE and the XOScript SE version. The next evening I created the draft version of the
+class generation and hooked it up to Maven. I was really amazed by the capabilities of Maven,
+truly nice to work with! So I always wanted to see how my little template engine system idea
+would work out in Java and I have to say I am very pleased with the results of this initial version.
+
+
+
 Zerlotte
 ========
 
