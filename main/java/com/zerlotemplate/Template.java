@@ -11,11 +11,11 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Template {
+public class Template implements Templateable {
 
     protected String ID;
     protected StringBuilder document;
-    protected HashMap<String,Template> snippets = new HashMap<String, Template>();
+    protected HashMap<String,Templateable> snippets = new HashMap<String, Templateable>();
     protected HashMap<String,List<String>> pasteareas = new HashMap<String, List<String>>();
     protected List<String> slots = new ArrayList<String>();
 
@@ -68,7 +68,7 @@ public class Template {
     }
 
 
-    public static Template from(ClassPathResource path) {
+    public static Templateable from(ClassPathResource path) {
         try {
             byte[] bytes = path.getInputStream().readAllBytes();
             return new Template( "Root", new String(bytes, StandardCharsets.UTF_8) );
@@ -78,11 +78,13 @@ public class Template {
         }
     }
 
-    public Template get(String id) {
+    @Override
+    public Templateable get(String id) {
         return this.snippets.get(id).copy();
     }
 
-    public Template paste(String id, Template snippet) {
+    @Override
+    public Templateable paste(String id, Templateable snippet) {
         Matcher m = Template.PATTERN_PASTE.matcher(this.document);
         while(m.find()) {
             this.document.insert(m.start(), snippet.toString());
@@ -90,7 +92,8 @@ public class Template {
         return this;
     }
 
-    public Template set(String slotID, String value) {
+    @Override
+    public Templateable set(String slotID, String value) {
         if (this.slots.contains(slotID)) {
             String mark = "<!-- slot:%s -->".formatted(slotID) ;
             int start = this.document.indexOf(mark);
@@ -106,7 +109,8 @@ public class Template {
         return this;
     }
 
-    public Template copy() {
+    @Override
+    public Templateable copy() {
         // avoid any parsing
         Template template = new Template(this.ID, "");
         // references are fine here, nothing will be changed
@@ -121,29 +125,31 @@ public class Template {
         return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 
+    @Override
     public String getClassName() {
-        String suffix = "";
-        String className = capitalize(this.ID) + suffix;
+        String className = capitalize(this.ID);
         return className;
     }
 
+    @Override
     public String generateClass() {
         String suffix = "";
         String className = capitalize(this.ID) + suffix;
         String classStr = """
             package com.zerlotemplate.snippets;
             
-            import com.zerlotemplate.Template;
+            import com.zerlotemplate.Templateable;
+            import com.zerlotemplate.Snippet;
             
-            public class %s {
+            public class %s implements Snippet {
             
-            protected Template template;
+            protected Templateable template;
             
-            public %s(Template t) {
+            public %s(Templateable t) {
                 this.template = t;
             }
             
-            public Template unbox() {
+            public Templateable unbox() {
                 return this.template;
             }
             
@@ -178,7 +184,7 @@ public class Template {
             }
         }
 
-        for (Map.Entry<String, Template> entry : this.snippets.entrySet()) {
+        for (Map.Entry<String, Templateable> entry : this.snippets.entrySet()) {
             classStrBuild.append("""
                 public %s get%s() {
                     return new %s( this.template.get("%s") );
@@ -208,6 +214,7 @@ public class Template {
 
     }
 
+    @Override
     public String info() {
         return "<Template ID=%s pasties=%s slots=%s >".formatted(
                 this.ID,
@@ -221,32 +228,14 @@ public class Template {
         return this.document.toString();
     }
 
+    @Override
     public void generateClasses(Path outputDir) throws IOException {
         String classCode = this.generateClass();
         String className = this.getClassName();
         Path outputFile = outputDir.resolve(className + ".java");
         Files.writeString(outputFile, classCode);
-        for (Map.Entry<String, Template> entry : this.snippets.entrySet()) {
+        for (Map.Entry<String, Templateable> entry : this.snippets.entrySet()) {
             entry.getValue().generateClasses(outputDir);
         }
     }
-
-
-    public static void main(String[] args) throws IOException {
-        Path templateDir = Path.of(args[0]);
-        Path outputDir = Path.of(args[2]);
-        Files.createDirectories(outputDir);
-        String classPathPrefix = args[1];
-        Files.walk(templateDir)
-                .filter(p -> p.toString().endsWith(".html"))
-                .forEach(p -> {
-                    Template template = Template.from( new ClassPathResource( classPathPrefix + "/" + p.getFileName()) );
-                    try {
-                        template.generateClasses(outputDir);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-    }
-
 }
